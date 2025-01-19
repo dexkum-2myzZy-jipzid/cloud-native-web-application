@@ -56,38 +56,57 @@ jobs:
           SSH_HOST: ${{ env.PUBLIC_IP }}
           SSH_USER: ${{ vars.SSH_USER }}
         run: |
+          echo "Deploying Flask App to EC2..."
           echo "$EC2_SSH_KEY" > ec2_key.pem
           chmod 600 ec2_key.pem
 
+          echo "Stopping running app if it exists..."
           ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOF'
-          # Stop the running app if it exists
           pkill -f app.py || true
-
-          # Remove the existing app directory
-          rm -rf /home/ubuntu/app
-
-          # Create a new deployment directory
-          mkdir -p /home/ubuntu/app
-          cd /home/ubuntu/app
-
-          # Install necessary packages
-          sudo apt-get update
-          sudo apt-get install -y python3-venv python3-pip
-
-          # Create and activate a virtual environment
-          python3 -m venv venv
-          source venv/bin/activate
-
-          # Install Flask
-          pip install flask
-
           exit
           EOF
 
-          # Copy the app file
+          echo "Removing existing app directory..."
+          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOF'
+          rm -rf /home/ubuntu/app
+          exit
+          EOF
+
+          echo "Creating new deployment directory..."
+          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOF'
+          mkdir -p /home/ubuntu/app
+          cd /home/ubuntu/app
+          exit
+          EOF
+
+          echo "Installing necessary packages..."
+          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOF'
+          sudo apt-get update
+          sudo apt-get install -y python3-venv python3-pip
+          exit
+          EOF
+
+          echo "Creating and activating virtual environment..."
+          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOF'
+          cd /home/ubuntu/app
+          python3 -m venv venv
+          source venv/bin/activate
+          exit
+          EOF
+
+          echo "Installing Flask..."
+          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOF'
+          cd /home/ubuntu/app
+          source venv/bin/activate
+          pip install flask
+          exit
+          EOF
+
+          echo "Copying app file..."
           scp -o StrictHostKeyChecking=no -i ec2_key.pem app.py $SSH_USER@$SSH_HOST:/home/ubuntu/app/
 
-          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOF'
+          echo "Starting Flask app..."
+          ssh -o StrictHostKeyChecking-no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOF'
           cd /home/ubuntu/app
           source venv/bin/activate
           nohup python app.py > app.log 2>&1 &
