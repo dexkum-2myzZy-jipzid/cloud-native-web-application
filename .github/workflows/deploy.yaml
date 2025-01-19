@@ -52,18 +52,11 @@ jobs:
         run: |
           echo "$EC2_SSH_KEY" > ec2_key.pem
           chmod 600 ec2_key.pem
-          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << EOF
-            pkill -f app.py || true
-            mkdir -p /home/ubuntu/deployment
-            rm -rf /home/ubuntu/deployment/*
-            sudo apt-get update
-            sudo apt-get install -y python3-pip
+          scp -o StrictHostKeyChecking=no -i ec2_key.pem app.py $SSH_USER@$SSH_HOST:/home/ubuntu/
+          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOF'
+            sudo apt update
+            sudo apt install -y python3 python3-pip
             pip3 install flask
-            exit
-          EOF
-          scp -o StrictHostKeyChecking=no -i ec2_key.pem app.py $SSH_USER@$SSH_HOST:/home/ubuntu/deployment/
-          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << EOF
-            cd /home/ubuntu/deployment
-            nohup python3 app.py > app.log 2>&1 &
+            nohup python3 /home/ubuntu/app.py &
             exit
           EOF
