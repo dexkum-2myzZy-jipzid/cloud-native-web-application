@@ -38,6 +38,12 @@ jobs:
           aws ec2 start-instances --instance-ids ${{ secrets.AWS_EC2_INSTANCE_ID }}
           echo "Starting instance..."
 
+      - name: Wait for EC2 instance to be running
+        if: env.instance_state != 'running'
+        run: |
+          aws ec2 wait instance-running --instance-ids ${{ secrets.AWS_EC2_INSTANCE_ID }}
+          echo "Instance is now running."
+
       - name: Get EC2 instance public IP
         id: get-ip
         run: |
@@ -57,6 +63,10 @@ jobs:
           # Create a deployment directory
           mkdir -p /home/ubuntu/app
           cd /home/ubuntu/app
+
+          # Install necessary packages
+          sudo apt-get update
+          sudo apt-get install -y python3-venv python3-pip
 
           # Create and activate a virtual environment
           python3 -m venv venv
