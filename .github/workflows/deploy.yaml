@@ -60,7 +60,13 @@ jobs:
           chmod 600 ec2_key.pem
 
           ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOF'
-          # Create a deployment directory
+          # Stop the running app if it exists
+          pkill -f app.py || true
+
+          # Remove the existing app directory
+          rm -rf /home/ubuntu/app
+
+          # Create a new deployment directory
           mkdir -p /home/ubuntu/app
           cd /home/ubuntu/app
 
@@ -75,10 +81,10 @@ jobs:
           # Install Flask
           pip install flask
 
-          # Copy the app file
           exit
           EOF
 
+          # Copy the app file
           scp -o StrictHostKeyChecking=no -i ec2_key.pem app.py $SSH_USER@$SSH_HOST:/home/ubuntu/app/
 
           ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOF'
