@@ -115,3 +115,14 @@ jobs:
 
       - name: Output Application URL
         run: echo "Application is running at http://${{ env.PUBLIC_IP }}:8080"
+
+      - name: Setup Variables for Grader Workflow
+        run: |
+          echo "SSH_HOST=${{ env.PUBLIC_IP }}" > grader-env.txt
+          echo "SSH_USER=${{ vars.SSH_USER }}" >> grader-env.txt
+
+      - name: Upload Grader Environment Variables
+        uses: actions/upload-artifact@v4
+        with:
+          name: grader-env
+          path: grader-env.txt
