@@ -106,7 +106,7 @@ jobs:
           scp -o StrictHostKeyChecking=no -i ec2_key.pem app.py $SSH_USER@$SSH_HOST:/home/ubuntu/app/
 
           echo "Starting Flask app..."
-          ssh -o StrictHostKeyChecking-no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOF'
           cd /home/ubuntu/app
           source venv/bin/activate
           nohup python app.py > app.log 2>&1 &
