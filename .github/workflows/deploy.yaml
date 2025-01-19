@@ -38,10 +38,16 @@ jobs:
           aws ec2 start-instances --instance-ids ${{ secrets.AWS_EC2_INSTANCE_ID }}
           echo "Starting instance..."
 
+      - name: Get EC2 instance public IP
+        id: get-ip
+        run: |
+          PUBLIC_IP=$(aws ec2 describe-instances --instance-ids ${{ secrets.AWS_EC2_INSTANCE_ID }} --query "Reservations[0].Instances[0].PublicIpAddress" --output text)
+          echo "PUBLIC_IP=$PUBLIC_IP" >> $GITHUB_ENV
+
       - name: Deploy Flask App to EC2
         env:
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-          SSH_HOST: ${{ vars.SSH_HOST }}
+          SSH_HOST: ${{ env.PUBLIC_IP }}
           SSH_USER: ${{ vars.SSH_USER }}
         run: |
           echo "$EC2_SSH_KEY" > ec2_key.pem
