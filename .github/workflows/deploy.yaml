@@ -1,0 +1,63 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches:
+      - test/github-actions # for testing
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: AWS_DEPLOYMENT
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Check EC2 instance status
+        id: check-status
+        run: |
+          state=$(aws ec2 describe-instances --instance-ids ${{ secrets.AWS_EC2_INSTANCE_ID }} --query "Reservations[0].Instances[0].State.Name" --output text)
+          echo "Instance state: $state"
+          echo "instance_state=$state" >> $GITHUB_ENV
+
+      - name: Start EC2 instance if stopped
+        if: env.instance_state != 'running'
+        run: |
+          aws ec2 start-instances --instance-ids ${{ secrets.AWS_EC2_INSTANCE_ID }}
+          echo "Starting instance..."
+
+      - name: Deploy Flask App to EC2
+        env:
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          SSH_HOST: ${{ vars.SSH_HOST }}
+          SSH_USER: ${{ vars.SSH_USER }}
+        run: |
+          echo "$EC2_SSH_KEY" > ec2_key.pem
+          chmod 600 ec2_key.pem
+          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << EOF
+            pkill -f app.py || true
+            mkdir -p /home/ubuntu/deployment
+            rm -rf /home/ubuntu/deployment/*
+            sudo apt-get update
+            sudo apt-get install -y python3-pip
+            pip3 install flask
+            exit
+          EOF
+          scp -o StrictHostKeyChecking=no -i ec2_key.pem app.py $SSH_USER@$SSH_HOST:/home/ubuntu/deployment/
+          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << EOF
+            cd /home/ubuntu/deployment
+            nohup python3 app.py > app.log 2>&1 &
+            exit
+          EOF
