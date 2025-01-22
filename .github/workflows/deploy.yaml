@@ -89,7 +89,7 @@ jobs:
           EOF
 
           echo "Copying all files from root to EC2..."
-          scp -o StrictHostKeyChecking=no -i -r ./* $SSH_USER@$SSH_HOST:/home/ubuntu/app/
+          scp -o StrictHostKeyChecking=no -i ec2_key.pem -r ./* $SSH_USER@$SSH_HOST:/home/ubuntu/app/
 
           echo "Installing dependencies from requirements.txt on EC2..."
           ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOF'
