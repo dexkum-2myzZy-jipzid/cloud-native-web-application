@@ -1,10 +1,6 @@
 name: Continuous Deploy
 
 on:
-  push:
-    branches:
-      - test/github-actions # for testing
-      - main
   pull_request:
     branches:
       - main
