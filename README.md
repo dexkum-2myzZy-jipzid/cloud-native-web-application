@@ -11,7 +11,6 @@
 **Build and Deploy Instructions**:
 
 1. **Trigger Conditions**:
-   - On push to `test/github-actions` or `main` branches.
    - On pull request to `main` branch.
 2. **Deployment Job**:
    - **Runs on**: `ubuntu-latest`
