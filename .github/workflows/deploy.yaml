@@ -1,6 +1,9 @@
 name: Continuous Deploy
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
