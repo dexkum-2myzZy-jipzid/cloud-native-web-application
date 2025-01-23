@@ -107,9 +107,6 @@ jobs:
           exit
           EOF
 
-      - name: Output Application URL
-        run: echo "Application is running at http://${{ env.PUBLIC_IP }}:8080"
-
       - name: Setup Variables for Grader Workflow
         run: |
           echo "SSH_HOST=${{ env.PUBLIC_IP }}" > grader-env.txt
