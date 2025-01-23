@@ -30,7 +30,7 @@
       - Install necessary packages.
       - Create and activate virtual environment.
       - Copy all files from root to EC2.
-      - Install dependencies from [requirements.txt](vscode-file://vscode-app/Applications/Visual Studio Code.app/Contents/Resources/app/out/vs/code/electron-sandbox/workbench/workbench.html) on EC2.
+      - Install dependencies from requirements.txt on EC2.
       - Start Flask app.
    8. Setup Variables for Grader Workflow.
    9. Upload Grader Environment Variables.
