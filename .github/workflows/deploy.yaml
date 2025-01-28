@@ -33,10 +33,18 @@ jobs:
           echo "No existing stack to delete."
 
       - name: Create VPC and Subnets
+        env:
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
         run: |
           aws cloudformation create-stack \
             --stack-name vpc \
             --template-body file://infrastructure/vpc.yaml \
+            --parameters \
+              ParameterKey=DBUser,ParameterValue=$DB_USER \
+              ParameterKey=DBPassword,ParameterValue=$DB_PASSWORD \
+              ParameterKey=DBName,ParameterValue=$DB_NAME \
             --capabilities CAPABILITY_NAMED_IAM
 
       - name: Wait for stack creation to complete
@@ -98,15 +106,17 @@ jobs:
 
       - name: Create and copy .env file to EC2
         env:
-          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
           SSH_HOST: ${{ env.PUBLIC_IP }}
           SSH_USER: ${{ vars.SSH_USER }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
         run: |
           echo "Creating .env file..."
           echo "DB_HOST=${{ env.DATABASE_PRIVATE_IP }}" > .env
-          echo "DB_USER=root" >> .env
-          echo "DB_PASSWORD=password" >> .env
-          echo "DB_NAME=recommend" >> .env
+          echo "DB_USER=${{ env.DB_USER }}" >> .env
+          echo "DB_PASSWORD=${{ env.DB_PASSWORD }}" >> .env
+          echo "DB_NAME=${{ env.DB_NAME }}" >> .env
           cat .env
 
           echo "Copying .env file to EC2..."
