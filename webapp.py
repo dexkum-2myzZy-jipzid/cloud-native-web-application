@@ -1,6 +1,9 @@
 from flask import Flask, jsonify, make_response, request
 from mysql.connector import Error
 from config import get_db_connection
+from collections import OrderedDict
+import json
+
 
 app = Flask(__name__)
 
@@ -54,8 +57,9 @@ def get_movie(record_id):
             "title": movie["title"],
             "genres": movie["genres"]
         }
-
-        response = make_response(jsonify({"movie": formatted_movie}), 200)
+        response_data = json.dumps({"movie": formatted_movie})
+        response = make_response(response_data, 200)
+        response.headers['Content-Type'] = 'application/json'
         return set_response_headers(response)
     except Error as e:
         response = make_response(jsonify({"error": "Internal Server Error", "details": str(e)}), 500)
