@@ -45,7 +45,13 @@ def get_movie(record_id):
             response = make_response(jsonify({"error": "Movie Not Found"}), 400)
             return set_response_headers(response)
 
-        response = make_response({"movie": movie}, 200)
+        formatted_movie = {
+            "movie_id": movie["movieId"],
+            "title": movie["title"],
+            "genres": movie["genres"]
+        }
+
+        response = make_response(jsonify({"movie": formatted_movie}), 200)
         return set_response_headers(response)
     except Error as e:
         response = make_response(jsonify({"error": "Internal Server Error", "details": str(e)}), 500)
@@ -57,4 +63,4 @@ def get_movie(record_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=8080)
+    app.run(host="0.0.0.0", port=8080)
