@@ -1,12 +1,9 @@
 import csv
 from config import get_db_connection
 
-# CSV file path
 CSV_FILE = 'ml-latest-small/movies.csv'
 
 # Recreate movies table
-
-
 def recreate_movies_table(cursor):
     cursor.execute("DROP TABLE IF EXISTS movies")
     cursor.execute("""
@@ -18,8 +15,6 @@ def recreate_movies_table(cursor):
     """)
 
 # Import CSV data into the database
-
-
 def import_movies_to_db():
     try:
         # Connect to the database
@@ -49,6 +44,5 @@ def import_movies_to_db():
             connection.close()
 
 
-# Main function
 if __name__ == "__main__":
     import_movies_to_db()

@@ -46,7 +46,7 @@ def get_movie(record_id):
             return set_response_headers(response)
 
         formatted_movie = {
-            "movie_id": movie["movieId"],
+            "movieId": movie["movieId"],
             "title": movie["title"],
             "genres": movie["genres"]
         }
