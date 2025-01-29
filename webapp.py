@@ -57,7 +57,7 @@ def get_movie(record_id):
             "title": movie["title"],
             "genres": movie["genres"]
         }
-        response_data = json.dumps({"movie": formatted_movie})
+        response_data = json.dumps({"movie": formatted_movie}, separators=(',', ':'))
         response = make_response(response_data, 200)
         response.headers['Content-Type'] = 'application/json'
         return set_response_headers(response)
