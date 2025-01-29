@@ -8,9 +8,14 @@ app = Flask(__name__)
 # Healthcheck endpoint
 @app.route("/v1/healthcheck", methods=["GET"])
 def healthcheck():
+    # 1. Check query parameters
+    if request.args:
+        return jsonify({"error": "Query parameters are not allowed"}), 400
+
     conn = None
     cursor = None
     try:
+        # 2. Check database connection
         conn = get_db_connection()
         if conn is None:
             return jsonify({"status": "Database Unavailable"}), 503
@@ -28,6 +33,12 @@ def healthcheck():
             conn.close()
 
 
+# Return 400 if method is not GET
+@app.route("/v1/healthcheck", methods=["POST", "PUT", "DELETE", "PATCH"])
+def invalid_method():
+    return jsonify({"error": "Invalid request method"}), 400
+
+
 # Movie query endpoint
 @app.route("/v1/movie/<int:record_id>", methods=["GET"])
 def get_movie(record_id):
@@ -40,7 +51,13 @@ def get_movie(record_id):
         if not movie:
             return jsonify({"error": "Movie Not Found"}), 400
 
-        return jsonify({"movie": movie}), 200
+        formatted_movie = {
+            "movieId": movie["movieId"],
+            "title": movie["title"],
+            "genres": movie["genres"]
+        }
+
+        return jsonify({"movie": formatted_movie}), 200
     except Error as e:
         return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
     finally:
