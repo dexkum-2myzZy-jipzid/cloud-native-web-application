@@ -19,7 +19,8 @@ def get_db_connection():
             host=DB_HOST,
             user=DB_USER,
             password=DB_PASSWORD,
-            database=DB_NAME
+            database=DB_NAME,
+            connection_timeout=3
         )
         if connection.is_connected():
             print("Successfully connected to the database")
