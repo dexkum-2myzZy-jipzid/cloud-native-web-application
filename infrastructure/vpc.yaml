@@ -91,6 +91,9 @@ Resources:
     Type: AWS::EC2::EIP
     Properties:
       Domain: vpc
+      Tags:
+        - Key: Name
+          Value: NatGatewayEIP
 
   # Create NAT Gateway
   NatGateway:
@@ -141,6 +144,9 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: WebAppSecurityGroup
 
   # Create Security Group for Database
   DatabaseSecurityGroup:
@@ -153,6 +159,9 @@ Resources:
           FromPort: 3306
           ToPort: 3306
           SourceSecurityGroupId: !Ref WebAppSecurityGroup
+      Tags:
+        - Key: Name
+          Value: DatabaseSecurityGroup
 
   # Create WebApp EC2 Instance
   WebAppInstance:
@@ -167,6 +176,9 @@ Resources:
           SubnetId: !Ref PublicSubnet
           GroupSet:
             - !Ref WebAppSecurityGroup
+      Tags:
+        - Key: Name
+          Value: WebAppInstance
 
   # Create Database EC2 Instance
   DatabaseInstance:
@@ -193,15 +205,14 @@ Resources:
           mysql -e "FLUSH PRIVILEGES;"
           sudo sed -i 's/^bind-address.*/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
           service mysql restart
+      Tags:
+        - Key: Name
+          Value: DatabaseInstance
 
 Outputs:
   WebAppPublicIP:
     Description: 'Public IP address of the WebApp instance'
     Value: !GetAtt WebAppInstance.PublicIp
-
-  WebAppPrivateIP:
-    Description: 'Private IP address of the WebApp instance'
-    Value: !GetAtt WebAppInstance.PrivateIp
 
   DatabasePrivateIP:
     Description: 'Private IP address of the Database instance'

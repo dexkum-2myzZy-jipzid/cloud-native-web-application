@@ -55,22 +55,20 @@ jobs:
         id: get-outputs
         run: |
           aws cloudformation describe-stacks --stack-name vpc --query "Stacks[0].Outputs" > stack-outputs.json
-          cat stack-outputs.json
+          # cat stack-outputs.json
 
       - name: Extract WebApp Public IP and Database Private IP
         id: extract_ips
         run: |
           WEBAPP_PUBLIC_IP=$(jq -r '.[] | select(.OutputKey=="WebAppPublicIP") | .OutputValue' stack-outputs.json)
           DATABASE_PRIVATE_IP=$(jq -r '.[] | select(.OutputKey=="DatabasePrivateIP") | .OutputValue' stack-outputs.json)
-          echo "WebApp Public IP: $WEBAPP_PUBLIC_IP"
-          echo "Database Private IP: $DATABASE_PRIVATE_IP"
           echo "PUBLIC_IP=$WEBAPP_PUBLIC_IP" >> $GITHUB_ENV
           echo "DATABASE_PRIVATE_IP=$DATABASE_PRIVATE_IP" >> $GITHUB_ENV
 
-      - name: Use WebApp Public IP and Database Private IP
-        run: |
-          echo "The WebApp Public IP is ${{ env.PUBLIC_IP }}"
-          echo "The Database Private IP is ${{ env.DATABASE_PRIVATE_IP }}"
+      # - name: Use WebApp Public IP and Database Private IP
+      #   run: |
+      #     echo "The WebApp Public IP is ${{ env.PUBLIC_IP }}"
+      #     echo "The Database Private IP is ${{ env.DATABASE_PRIVATE_IP }}"
 
       - name: Setup environment on EC2
         env:
@@ -117,7 +115,7 @@ jobs:
           echo "DB_USER=${{ env.DB_USER }}" >> .env
           echo "DB_PASSWORD=${{ env.DB_PASSWORD }}" >> .env
           echo "DB_NAME=${{ env.DB_NAME }}" >> .env
-          cat .env
+          # cat .env
 
           echo "Copying .env file to EC2..."
           scp -o StrictHostKeyChecking=no -i ec2_key.pem .env $SSH_USER@$SSH_HOST:/home/ubuntu/app/
