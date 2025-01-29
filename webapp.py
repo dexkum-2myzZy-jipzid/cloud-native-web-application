@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, make_response, request
 from mysql.connector import Error
 from config import get_db_connection
 
@@ -6,37 +6,22 @@ app = Flask(__name__)
 
 
 # Healthcheck endpoint
+@app.after_request
+def add_no_cache_header(response):
+    response.headers["Cache-Control"] = "no-cache"
+    return response
+
 @app.route("/v1/healthcheck", methods=["GET"])
 def healthcheck():
-    # 1. Check query parameters
-    if request.args:
-        return jsonify({"error": "Query parameters are not allowed"}), 400
+    if request.args or request.form:
+        return make_response(jsonify({"error": "Bad Request"}), 400)
 
-    conn = None
-    cursor = None
-    try:
-        # 2. Check database connection
-        conn = get_db_connection()
-        if conn is None:
-            return jsonify({"status": "Database Unavailable"}), 503
-
-        cursor = conn.cursor()
-        cursor.execute("SELECT 1")
-        cursor.fetchall()
-        return jsonify({"status": "OK"}), 200
-    except Error as e:
-        return jsonify({"status": "Database Unavailable", "error": str(e)}), 503
-    finally:
-        if cursor:
-            cursor.close()
-        if conn and conn.is_connected():
-            conn.close()
-
-
-# Return 400 if method is not GET
-@app.route("/v1/healthcheck", methods=["POST", "PUT", "DELETE", "PATCH"])
-def invalid_method():
-    return jsonify({"error": "Invalid request method"}), 400
+    db_connection = get_db_connection()
+    if db_connection and db_connection.is_connected():
+        db_connection.close()
+        return make_response(jsonify({"status": "OK"}), 200)
+    else:
+        return make_response(jsonify({"error": "Service Unavailable"}), 503)
 
 
 # Movie query endpoint
@@ -49,7 +34,8 @@ def get_movie(record_id):
         movie = cursor.fetchone()
 
         if not movie:
-            return jsonify({"error": "Movie Not Found"}), 400
+            response = make_response(jsonify({"error": "Movie Not Found"}), 400)
+            return response
 
         formatted_movie = {
             "movieId": movie["movieId"],
@@ -57,9 +43,11 @@ def get_movie(record_id):
             "genres": movie["genres"]
         }
 
-        return jsonify({"movie": formatted_movie}), 200
+        response = make_response(jsonify({"movie": formatted_movie}), 200)
+        return response
     except Error as e:
-        return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
+        response = make_response(jsonify({"error": "Internal Server Error", "details": str(e)}), 500)
+        return response
     finally:
         if conn.is_connected():
             cursor.close()
