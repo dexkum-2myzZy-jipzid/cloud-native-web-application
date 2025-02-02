@@ -9,7 +9,7 @@ project_root = os.path.dirname(script_dir)
 sys.path.insert(0, project_root)
 
 import csv
-from database.connection import db_cursor
+from database.connection import get_db_connection
 
 CSV_FILE = 'ml-latest-small/movies.csv'
 
@@ -25,19 +25,23 @@ def recreate_movies_table(cursor):
 
 def import_movies_to_db():
     try:
-        with db_cursor(commit=True) as cursor:
-            # Recreate the table
-            recreate_movies_table(cursor)
+         # Connect to the database
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        # Recreate the table
+        recreate_movies_table(cursor)
             
-            # Read CSV and insert data
-            with open(CSV_FILE, 'r') as file:
-                reader = csv.DictReader(file)
-                for row in reader:
-                    cursor.execute("""
-                        INSERT INTO movies (movieId, title, genres) 
-                        VALUES (%s, %s, %s)
-                    """, (row['movieId'], row['title'], row['genres']))
-                    
+        # Read CSV and insert data
+        with open(CSV_FILE, 'r') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                cursor.execute("""
+                    INSERT INTO movies (movieId, title, genres) 
+                    VALUES (%s, %s, %s)
+                """, (row['movieId'], row['title'], row['genres']))
+
+        # Commit the transaction
+        connection.commit()           
         print("✅ Movies data imported successfully!")
     except Exception as e:
         print(f"❌ Error: {e}")

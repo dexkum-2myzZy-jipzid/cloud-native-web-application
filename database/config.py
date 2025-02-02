@@ -10,6 +10,4 @@ class DatabaseConfig:
     USER = os.getenv('DB_USER')
     PASSWORD = os.getenv('DB_PASSWORD')
     NAME = os.getenv('DB_NAME')
-    POOL_NAME = "movie_pool"
-    POOL_SIZE = 5
     CONNECTION_TIMEOUT = 3

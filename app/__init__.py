@@ -1,5 +1,4 @@
 from flask import Flask
-from database import init_database  # Import from separate module
 
 def create_app():
     app = Flask(__name__)
@@ -8,7 +7,7 @@ def create_app():
     app.config.from_object('app.config.AppConfig')
     
     # Initialize database module
-    init_database(app)
+    # init_database(app)
     
     # Register blueprints
     from .routes.health import health_bp
