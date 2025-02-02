@@ -7,6 +7,7 @@ Parameters:
     Description: The username for the database
   DBPassword:
     Type: String
+    NoEcho: true
     Description: The password for the database
   DBName:
     Type: String
@@ -98,6 +99,7 @@ Resources:
   # Create NAT Gateway
   NatGateway:
     Type: AWS::EC2::NatGateway
+    DependsOn: AttachGateway
     Properties:
       AllocationId: !GetAtt NatGatewayEIP.AllocationId
       SubnetId: !Ref PublicSubnet
