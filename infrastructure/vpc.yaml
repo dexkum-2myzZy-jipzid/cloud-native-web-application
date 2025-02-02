@@ -99,7 +99,9 @@ Resources:
   # Create NAT Gateway
   NatGateway:
     Type: AWS::EC2::NatGateway
-    DependsOn: AttachGateway
+    DependsOn:
+      - AttachGateway
+      - NatGatewayEIP
     Properties:
       AllocationId: !GetAtt NatGatewayEIP.AllocationId
       SubnetId: !Ref PublicSubnet
@@ -185,6 +187,9 @@ Resources:
   # Create Database EC2 Instance
   DatabaseInstance:
     Type: AWS::EC2::Instance
+    DependsOn:
+      - NatGateway
+      - PrivateRoute
     Properties:
       InstanceType: t2.micro
       ImageId: ami-00c257e12d6828491
