@@ -134,7 +134,7 @@ jobs:
             source venv/bin/activate
 
             echo "Running ingestion script..."
-            python movies_ingest.py
+            python scripts/movies_ingest.py
 
             echo "Ingestion completed."
           EOF
@@ -153,7 +153,7 @@ jobs:
             echo "Activating virtual environment..."
             source venv/bin/activate
 
-            nohup python webapp.py > app.log 2>&1 &
+            nohup python run.py > app.log 2>&1 &
             exit
           EOF
 
@@ -166,7 +166,7 @@ jobs:
           echo "MYSQL_PRIVATE_IP=${{ env.DATABASE_PRIVATE_IP }}" >> grader-env.txt
           echo "DATABASE_USER_NAME=${{ secrets.DB_USER }}" >> grader-env.txt
           echo "DATABASE_PASSWORD=${{ secrets.DB_PASSWORD }}" >> grader-env.txt
-          echo "MOVIE_INGEST_COMMAND=./run_ingestion.sh" >> grader-env.txt
+          echo "MOVIE_INGEST_COMMAND=./scripts/run_ingestion.sh" >> grader-env.txt
 
       - name: Upload Grader Environment Variables
         uses: actions/upload-artifact@v4
