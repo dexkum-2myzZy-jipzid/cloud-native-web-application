@@ -19,9 +19,12 @@ def create_app():
     app.register_blueprint(movies_bp)
     
     # Global error handling
-    @app.errorhandler(404)
+    # @app.errorhandler(404)
     @app.errorhandler(405)
     def handle_unsupported(e):
         return {"error": "Bad Request"}, 400
+    
+    # Debugging
+    # print(app.url_map)
     
     return app
