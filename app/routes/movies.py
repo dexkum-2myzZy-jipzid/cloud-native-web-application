@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, request
 from database.connection import get_db_connection
-import json
 
 movies_bp = Blueprint('movies', __name__, url_prefix='/v1')
 
