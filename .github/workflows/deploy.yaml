@@ -100,34 +100,34 @@ jobs:
 
           echo "Executing nested SSH..."
           ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST /bin/bash << EOF
-            chmod 400 /tmp/ec2_key.pem
-            ssh -o StrictHostKeyChecking=no -i /tmp/ec2_key.pem $SSH_USER@$DB_IP /bin/bash << 'EODB'
-              echo "Connected to Database EC2"
+          chmod 400 /tmp/ec2_key.pem
+          ssh -o StrictHostKeyChecking=no -i /tmp/ec2_key.pem $SSH_USER@$DB_IP /bin/bash << 'EODB'
+          echo "Connected to Database EC2"
 
-              echo "Checking EBS volume..."
-              if ! lsblk | grep -q xvdf; then
-                echo "ERROR: EBS volume not detected!"
-                exit 1
-              fi
-              
-              # Mount EBS volume
-              echo "Mounting EBS volume..."
-              sudo mkdir -p /mnt/mysql-data
-              sudo mount /dev/xvdf /mnt/mysql-data || true
-              echo "/dev/xvdf /mnt/mysql-data ext4 defaults,nofail 0 2" | sudo tee -a /etc/fstab
-              echo "EBS volume mounted."
+          echo "Checking EBS volume..."
+          if ! lsblk | grep -q xvdf; then
+            echo "ERROR: EBS volume not detected!"
+            exit 1
+          fi
 
-              # Set permissions
-              echo "Setting permissions..."
-              sudo chown -R mysql:mysql /mnt/mysql-data
-              echo "Permissions set."
+          # Mount EBS volume
+          echo "Mounting EBS volume..."
+          sudo mkdir -p /mnt/mysql-data
+          sudo mount /dev/xvdf /mnt/mysql-data || true
+          echo "/dev/xvdf /mnt/mysql-data ext4 defaults,nofail 0 2" | sudo tee -a /etc/fstab
+          echo "EBS volume mounted."
 
-              # Restart MySQL service
-              echo "Restarting MySQL service..."
-              sudo systemctl restart mysql
-              echo "MySQL restarted with EBS volume."
-            EODB
-            rm -f /tmp/ec2_key.pem
+          # Set permissions
+          echo "Setting permissions..."
+          sudo chown -R mysql:mysql /mnt/mysql-data
+          echo "Permissions set."
+
+          # Restart MySQL service
+          echo "Restarting MySQL service..."
+          sudo systemctl restart mysql
+          echo "MySQL restarted with EBS volume."
+          EODB
+          rm -f /tmp/ec2_key.pem
           EOF
 
       - name: Setup environment on EC2
