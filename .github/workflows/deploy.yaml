@@ -89,17 +89,18 @@ jobs:
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
           SSH_HOST: ${{ env.PUBLIC_IP }}
           SSH_USER: ${{ vars.SSH_USER }}
+          DB_IP: ${{ env.DATABASE_PRIVATE_IP }}
         run: |
           echo "Copy SSH key to runner"
           echo "$EC2_SSH_KEY" > ec2_key.pem
           chmod 600 ec2_key.pem
 
-          echo "Copying all files from root to EC2..."
-          scp -o StrictHostKeyChecking=no -i ec2_key.pem -r ./* $SSH_USER@$SSH_HOST:/home/ubuntu/app/
+          echo "Copying necessary files to EC2..."
+          scp -o StrictHostKeyChecking=no -i ec2_key.pem ec2_key.pem $SSH_USER@$SSH_HOST:/tmp/
 
           echo "Configure EBS on Database EC2..."
-          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOF'
-            ssh -o StrictHostKeyChecking=no -i app/ec2_key.pem $SSH_USER@${{ env.DATABASE_PRIVATE_IP }} << 'INNER_EOF'
+          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOSSH'
+            ssh -o StrictHostKeyChecking=no -i /tmp/ec2_key.pem $SSH_USER@$DB_IP << 'EODB'
               echo "Connected to Database EC2 instance"
 
               # Check if EBS volume is mounted
@@ -122,10 +123,10 @@ jobs:
               sudo systemctl stop mysql
               sudo systemctl start mysql
               echo "MySQL is running with EBS Volume."
-            INNER_EOF
-            # delete the key from the EC2 instance for security
-            rm -f app/ec2_key.pem
-          EOF
+            EODB
+            # Delete the key from the EC2 instance for security
+            rm -f /tmp/ec2_key.pem
+          EOSSH
 
       - name: Setup environment on EC2
         env:
@@ -138,7 +139,7 @@ jobs:
           # chmod 600 ec2_key.pem
 
           # echo "Copying all files from root to EC2..."
-          # scp -o StrictHostKeyChecking=no -i ec2_key.pem -r ./* $SSH_USER@$SSH_HOST:/home/ubuntu/app/
+          scp -o StrictHostKeyChecking=no -i ec2_key.pem -r ./* $SSH_USER@$SSH_HOST:/home/ubuntu/app/
 
           echo "Setting up environment on EC2..."
           ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOF'
