@@ -1,18 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: VPC with two EC2 instances, one for webapp and one for database
 
-Parameters:
-  DBUser:
-    Type: String
-    Description: The username for the database
-  DBPassword:
-    Type: String
-    NoEcho: true
-    Description: The password for the database
-  DBName:
-    Type: String
-    Description: The name of the database
-
 Resources:
   # Create VPC
   MyVPC:
