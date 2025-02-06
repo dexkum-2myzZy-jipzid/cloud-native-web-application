@@ -6,17 +6,16 @@ from functools import wraps
 def configure_auth_middleware(app):
     # whitelist of routes that do not require authentication
     AUTH_EXEMPT_ROUTES = {
-        'healthcheck': {'methods': ['GET'], 'path': '/v1/healthcheck'},
-        'register': {'methods': ['POST'], 'path': '/v1/register'},
-        'login': {'methods': ['POST'], 'path': '/v1/login'}
+        'healthcheck': { 'path': '/v1/healthcheck'},
+        'register': {'path': '/v1/register'},
+        'login': {'path': '/v1/login'}
     }
 
     @app.before_request
     def jwt_authentication():
         # whitelist check
         if any(
-            request.path == route['path'] and 
-            request.method in route['methods']
+            request.path == route['path']
             for route in AUTH_EXEMPT_ROUTES.values()
         ):
             return
