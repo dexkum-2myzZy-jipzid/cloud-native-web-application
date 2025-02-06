@@ -99,8 +99,10 @@ jobs:
           scp -o StrictHostKeyChecking=no -i ec2_key.pem ec2_key.pem $SSH_USER@$SSH_HOST:/tmp/
 
           echo "Configure EBS on Database EC2..."
-          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST <<-'EOSSH'
-          ssh -o StrictHostKeyChecking=no -i /tmp/ec2_key.pem $SSH_USER@$DB_IP <<-'EODB'
+          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOSSH'
+
+          chmod 400 /tmp/ec2_key.pem
+          ssh -o StrictHostKeyChecking=no -i /tmp/ec2_key.pem $SSH_USER@$DB_IP << 'EODB'
           echo "Connected to Database EC2 instance"
 
           # Check if EBS volume is mounted
@@ -199,7 +201,7 @@ jobs:
           SSH_USER: ${{ vars.SSH_USER }}
         run: |
           echo "Starting Flask app..."
-          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST <<-'EOF'
+          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOF'
             echo "Changing to app directory..."
             cd /home/ubuntu/app
 
