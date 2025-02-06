@@ -104,11 +104,9 @@ jobs:
               echo "Connected to Database EC2 instance"
 
               # Check if EBS volume is mounted
-              if lsblk | grep xvdf; then
-                  echo "EBS volume detected."
-              else
-                  echo "EBS volume not detected. Exiting..."
-                  exit 1
+              if ! lsblk | grep -q xvdf; then
+                echo "ERROR: EBS volume not detected!"
+                exit 1
               fi
 
               # Mount EBS volume
@@ -124,7 +122,6 @@ jobs:
               sudo systemctl start mysql
               echo "MySQL is running with EBS Volume."
             EODB
-            # Delete the key from the EC2 instance for security
             rm -f /tmp/ec2_key.pem
           EOSSH
 
