@@ -158,6 +158,9 @@ jobs:
           EOF
 
       - name: Create and copy .env file to EC2
+        env:
+          SSH_HOST: ${{ env.PUBLIC_IP }}
+          SSH_USER: ${{ vars.SSH_USER }}
         run: |
           echo "Creating .env file..."
           echo "DB_HOST=${{ env.DATABASE_PRIVATE_IP }}" > .env
