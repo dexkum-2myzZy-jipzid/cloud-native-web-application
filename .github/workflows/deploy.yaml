@@ -99,7 +99,7 @@ jobs:
 
           echo "Configure EBS on Database EC2..."
           ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOF'
-            ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@${{ env.DATABASE_PRIVATE_IP }} << 'INNER_EOF'
+            ssh -o StrictHostKeyChecking=no -i app/ec2_key.pem $SSH_USER@${{ env.DATABASE_PRIVATE_IP }} << 'INNER_EOF'
               echo "Connected to Database EC2 instance"
 
               # Check if EBS volume is mounted
@@ -124,7 +124,7 @@ jobs:
               echo "MySQL is running with EBS Volume."
             INNER_EOF
             # delete the key from the EC2 instance for security
-            rm -f ec2_key.pem
+            rm -f app/ec2_key.pem
           EOF
 
       - name: Setup environment on EC2
