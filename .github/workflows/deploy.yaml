@@ -100,29 +100,29 @@ jobs:
 
           echo "Configure EBS on Database EC2..."
           ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST <<-'EOSSH'
-            ssh -o StrictHostKeyChecking=no -i /tmp/ec2_key.pem $SSH_USER@$DB_IP <<-'EODB'
-              echo "Connected to Database EC2 instance"
+          ssh -o StrictHostKeyChecking=no -i /tmp/ec2_key.pem $SSH_USER@$DB_IP <<-'EODB'
+          echo "Connected to Database EC2 instance"
 
-              # Check if EBS volume is mounted
-              if ! lsblk | grep -q xvdf; then
-                echo "ERROR: EBS volume not detected!"
-                exit 1
-              fi
+          # Check if EBS volume is mounted
+          if ! lsblk | grep -q xvdf; then
+            echo "ERROR: EBS volume not detected!"
+            exit 1
+          fi
 
-              # Mount EBS volume
-              sudo mkdir -p /mnt/mysql-data
-              sudo mount /dev/xvdf /mnt/mysql-data
-              echo "/dev/xvdf /mnt/mysql-data ext4 defaults,nofail 0 2" | sudo tee -a /etc/fstab
+          # Mount EBS volume
+          sudo mkdir -p /mnt/mysql-data
+          sudo mount /dev/xvdf /mnt/mysql-data
+          echo "/dev/xvdf /mnt/mysql-data ext4 defaults,nofail 0 2" | sudo tee -a /etc/fstab
 
-              # Set permissions
-              sudo chown -R mysql:mysql /mnt/mysql-data
+          # Set permissions
+          sudo chown -R mysql:mysql /mnt/mysql-data
 
-              # Restart MySQL service
-              sudo systemctl stop mysql
-              sudo systemctl start mysql
-              echo "MySQL is running with EBS Volume."
-            EODB
-            rm -f /tmp/ec2_key.pem
+          # Restart MySQL service
+          sudo systemctl stop mysql
+          sudo systemctl start mysql
+          echo "MySQL is running with EBS Volume."
+          EODB
+          rm -f /tmp/ec2_key.pem
           EOSSH
 
       - name: Setup environment on EC2
