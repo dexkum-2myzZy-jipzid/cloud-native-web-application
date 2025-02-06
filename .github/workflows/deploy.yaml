@@ -1,3 +1,4 @@
+---
 name: Continuous Deployment
 
 on:
@@ -48,14 +49,13 @@ jobs:
             --capabilities CAPABILITY_NAMED_IAM
 
       - name: Wait for stack creation to complete
-        run: |
-          aws cloudformation wait stack-create-complete --stack-name vpc
+        run: aws cloudformation wait stack-create-complete --stack-name vpc
 
       - name: Get stack outputs
         id: get-outputs
         run: |
-          aws cloudformation describe-stacks --stack-name vpc --query "Stacks[0].Outputs" > stack-outputs.json
-          # cat stack-outputs.json
+          aws cloudformation describe-stacks --stack-name vpc \
+            --query "Stacks[0].Outputs" > stack-outputs.json
 
       - name: Extract WebApp Public IP, Database Private IP, and Database Instance ID
         id: extract_ips
@@ -81,7 +81,6 @@ jobs:
             --volume-id $VOLUME_ID \
             --instance-id ${{ env.DATABASE_INSTANCE_ID }} \
             --device /dev/sdf
-
           echo "Attached EBS Volume $VOLUME_ID to Database EC2"
 
       - name: Configure EBS Volume on Database EC2
@@ -91,35 +90,23 @@ jobs:
           SSH_USER: ${{ vars.SSH_USER }}
           DB_IP: ${{ env.DATABASE_PRIVATE_IP }}
         run: |
-          echo "Copy SSH key to runner"
-          echo "$EC2_SSH_KEY" > ec2_key.pem
-          chmod 600 ec2_key.pem
-
-          echo "Copying necessary files to EC2..."
-          scp -o StrictHostKeyChecking=no -i ec2_key.pem ec2_key.pem $SSH_USER@$SSH_HOST:/tmp/
-
-          echo "Configure EBS on Database EC2..."
+          echo "$EC2_SSH_KEY" > ec2_key.pem && chmod 600 ec2_key.pem
+          scp -o StrictHostKeyChecking=no -i ec2_key.pem ec2_key.pem \
+            $SSH_USER@$SSH_HOST:/tmp/
           ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOSSH'
             ssh -o StrictHostKeyChecking=no -i /tmp/ec2_key.pem $SSH_USER@$DB_IP << 'EODB'
               echo "Connected to Database EC2 instance"
 
-              # Check if EBS volume is mounted
               if ! lsblk | grep -q xvdf; then
                 echo "ERROR: EBS volume not detected!"
                 exit 1
               fi
-
-              # Mount EBS volume
               sudo mkdir -p /mnt/mysql-data
               sudo mount /dev/xvdf /mnt/mysql-data
-              echo "/dev/xvdf /mnt/mysql-data ext4 defaults,nofail 0 2" | sudo tee -a /etc/fstab
-
-              # Set permissions
+              echo "/dev/xvdf /mnt/mysql-data ext4 defaults,nofail 0 2" | \
+                sudo tee -a /etc/fstab
               sudo chown -R mysql:mysql /mnt/mysql-data
-
-              # Restart MySQL service
-              sudo systemctl stop mysql
-              sudo systemctl start mysql
+              sudo systemctl restart mysql
               echo "MySQL is running with EBS Volume."
             EODB
             rm -f /tmp/ec2_key.pem
