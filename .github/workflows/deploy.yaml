@@ -132,8 +132,8 @@ jobs:
           SSH_USER: ${{ vars.SSH_USER }}
         run: |
           # echo "Copy SSH key to runner"
-          # echo "$EC2_SSH_KEY" > ec2_key.pem
-          # chmod 600 ec2_key.pem
+          echo "$EC2_SSH_KEY" > ec2_key.pem
+          chmod 600 ec2_key.pem
 
           # echo "Copying all files from root to EC2..."
           scp -o StrictHostKeyChecking=no -i ec2_key.pem -r ./* $SSH_USER@$SSH_HOST:/home/ubuntu/app/
