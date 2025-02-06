@@ -95,37 +95,40 @@ jobs:
           echo "$EC2_SSH_KEY" > ec2_key.pem
           chmod 600 ec2_key.pem
 
-          echo "Copying necessary files to EC2..."
+          echo "Copying key to EC2..."
           scp -o StrictHostKeyChecking=no -i ec2_key.pem ec2_key.pem $SSH_USER@$SSH_HOST:/tmp/
 
-          echo "Configure EBS on Database EC2..."
-          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST << 'EOSSH'
+          echo "Executing nested SSH..."
+          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $SSH_USER@$SSH_HOST /bin/bash << EOF
+            chmod 400 /tmp/ec2_key.pem
+            ssh -o StrictHostKeyChecking=no -i /tmp/ec2_key.pem $SSH_USER@$DB_IP /bin/bash << 'EODB'
+              echo "Connected to Database EC2"
 
-          chmod 400 /tmp/ec2_key.pem
-          ssh -o StrictHostKeyChecking=no -i /tmp/ec2_key.pem $SSH_USER@$DB_IP << 'EODB'
-          echo "Connected to Database EC2 instance"
+              echo "Checking EBS volume..."
+              if ! lsblk | grep -q xvdf; then
+                echo "ERROR: EBS volume not detected!"
+                exit 1
+              fi
+              
+              # Mount EBS volume
+              echo "Mounting EBS volume..."
+              sudo mkdir -p /mnt/mysql-data
+              sudo mount /dev/xvdf /mnt/mysql-data || true
+              echo "/dev/xvdf /mnt/mysql-data ext4 defaults,nofail 0 2" | sudo tee -a /etc/fstab
+              echo "EBS volume mounted."
 
-          # Check if EBS volume is mounted
-          if ! lsblk | grep -q xvdf; then
-            echo "ERROR: EBS volume not detected!"
-            exit 1
-          fi
+              # Set permissions
+              echo "Setting permissions..."
+              sudo chown -R mysql:mysql /mnt/mysql-data
+              echo "Permissions set."
 
-          # Mount EBS volume
-          sudo mkdir -p /mnt/mysql-data
-          sudo mount /dev/xvdf /mnt/mysql-data
-          echo "/dev/xvdf /mnt/mysql-data ext4 defaults,nofail 0 2" | sudo tee -a /etc/fstab
-
-          # Set permissions
-          sudo chown -R mysql:mysql /mnt/mysql-data
-
-          # Restart MySQL service
-          sudo systemctl stop mysql
-          sudo systemctl start mysql
-          echo "MySQL is running with EBS Volume."
-          EODB
-          rm -f /tmp/ec2_key.pem
-          EOSSH
+              # Restart MySQL service
+              echo "Restarting MySQL service..."
+              sudo systemctl restart mysql
+              echo "MySQL restarted with EBS volume."
+            EODB
+            rm -f /tmp/ec2_key.pem
+          EOF
 
       - name: Setup environment on EC2
         env:
@@ -196,7 +199,6 @@ jobs:
 
       - name: launch Web App to EC2
         env:
-          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
           SSH_HOST: ${{ env.PUBLIC_IP }}
           SSH_USER: ${{ vars.SSH_USER }}
         run: |
