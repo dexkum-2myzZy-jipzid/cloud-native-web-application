@@ -41,10 +41,6 @@ jobs:
           aws cloudformation create-stack \
             --stack-name vpc \
             --template-body file://infrastructure/vpc.yaml \
-            --parameters \
-              ParameterKey=DBUser,ParameterValue=$DB_USER \
-              ParameterKey=DBPassword,ParameterValue=$DB_PASSWORD \
-              ParameterKey=DBName,ParameterValue=$DB_NAME \
             --capabilities CAPABILITY_NAMED_IAM
 
       - name: Wait for stack creation to complete
@@ -67,11 +63,11 @@ jobs:
           echo "DATABASE_PRIVATE_IP=$DATABASE_PRIVATE_IP" >> $GITHUB_ENV
           echo "DATABASE_INSTANCE_ID=$DATABASE_INSTANCE_ID" >> $GITHUB_ENV
 
-      - name: Use WebApp Public IP and Database Private IP
-        run: |
-          echo "The WebApp Public IP is ${{ env.PUBLIC_IP }}"
-          echo "The Database Private IP is ${{ env.DATABASE_PRIVATE_IP }}"
-          echo "The Database Instance ID is ${{ env.DATABASE_INSTANCE_ID }}"
+      # - name: Use WebApp Public IP and Database Private IP
+      #   run: |
+      #     echo "The WebApp Public IP is ${{ env.PUBLIC_IP }}"
+      #     echo "The Database Private IP is ${{ env.DATABASE_PRIVATE_IP }}"
+      #     echo "The Database Instance ID is ${{ env.DATABASE_INSTANCE_ID }}"
 
       - name: Attach EBS Volume to Database EC2
         env:
@@ -115,17 +111,14 @@ jobs:
           sudo mkdir -p /mnt/mysql-data
           sudo mount /dev/xvdf /mnt/mysql-data || true
           echo "/dev/xvdf /mnt/mysql-data ext4 defaults,nofail 0 2" | sudo tee -a /etc/fstab
-          echo "EBS volume mounted."
 
           # Set permissions
           echo "Setting permissions..."
           sudo chown -R mysql:mysql /mnt/mysql-data
-          echo "Permissions set."
 
           # Restart MySQL service
           echo "Restarting MySQL service..."
           sudo systemctl restart mysql
-          echo "MySQL restarted with EBS volume."
           EODB
           rm -f /tmp/ec2_key.pem
           EOF
@@ -173,7 +166,7 @@ jobs:
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
           echo "FLASK_SECRET=${{ secrets.FLASK_SECRET }}" >> .env
-          cat .env
+          # cat .env
 
           echo "Copying .env file to EC2..."
           scp -o StrictHostKeyChecking=no -i ec2_key.pem .env $SSH_USER@$SSH_HOST:/home/ubuntu/app/
@@ -216,7 +209,7 @@ jobs:
 
       - name: Setup Variables for Grader Workflow
         run: |
-          echo "SSH_HOST=${{ env.PUBLIC_IP }}" > grader-env.txt
+          echo "SSH_HOST=${{ env.PUBLIC_IP }}" >> grader-env.txt
           echo "SSH_USER=${{ vars.SSH_USER }}" >> grader-env.txt
           echo "WEBAPP_HOST=${{ env.PUBLIC_IP }}" >> grader-env.txt
           echo "WEBAPP_USER=${{ vars.SSH_USER }}" >> grader-env.txt

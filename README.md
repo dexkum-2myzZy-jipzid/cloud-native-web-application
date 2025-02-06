@@ -29,10 +29,10 @@
 3. Delete existing CloudFormation stack if it exists.
 4. Create VPC and subnets using the `vpc.yaml` template.
 5. Wait for stack creation to complete.
-6. Get stack outputs and extract public and private IPs.
-7. Setup environment on EC2: create SSH key, copy files, and install packages.
-8. Create and copy `.env` file to EC2.
-9. Ingest movies data using `movies_ingest.py`.
-10. Launch Flask app on EC2.
-11. Setup grader workflow variables.
-12. Upload grader environment variables.
+6. Get stack outputs and extract public IPs, private IPs, and Database Instance ID.
+7. Attach EBS Volume to the Database EC2 instance.
+8. Configure EBS Volume (mount, set permissions, restart MySQL service).
+9. Setup environment on WebApp EC2.
+10. Create and copy `.env` file to EC2 with database instance IP.
+11. Launch Flask app on EC2 using `nohup`.
+12. Setup grader workflow variables and upload them as an artifact.
