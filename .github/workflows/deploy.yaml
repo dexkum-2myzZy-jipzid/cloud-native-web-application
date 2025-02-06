@@ -1,4 +1,4 @@
-name: Continuous Deployment
+name: Continuous Deploy
 
 on:
   push:
@@ -223,7 +223,7 @@ jobs:
           echo "MYSQL_PRIVATE_IP=${{ env.DATABASE_PRIVATE_IP }}" >> grader-env.txt
           echo "DATABASE_USER_NAME=${{ secrets.DB_USER }}" >> grader-env.txt
           echo "DATABASE_PASSWORD=${{ secrets.DB_PASSWORD }}" >> grader-env.txt
-          # echo "MOVIE_INGEST_COMMAND=./scripts/run_ingestion.sh" >> grader-env.txt
+          echo "MOVIE_INGEST_COMMAND=./scripts/run_ingestion.sh" >> grader-env.txt
 
       - name: Upload Grader Environment Variables
         uses: actions/upload-artifact@v4
