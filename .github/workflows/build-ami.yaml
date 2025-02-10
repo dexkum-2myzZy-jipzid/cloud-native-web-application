@@ -44,9 +44,10 @@ jobs:
           cd packer
           packer build . | tee packer_build_output.log
 
-      - name: Extract AMI ID from Packer Build Output
-        run: |
-          AMI_ID=$(grep -oP '(?<=us-west-2: )ami-[a-zA-Z0-9]+' packer_build_output.log)
-          echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
-          echo "AMI_ID=$AMI_ID"
+      - name: Extract AMI ID
         id: get_ami_id
+        run: |
+          AMI_ID=$(grep -o 'AMI: ami-[^ ]*' packer_build_output.log | cut -d' ' -f2 | sed 's/\x1b\[[0-9;]*m//g')
+          [ -z "$AMI_ID" ] && { echo "Error: AMI ID is empty"; exit 1; }
+          echo "AMI ID is $AMI_ID"
+          echo "$AMI_ID" > ami_id.txt
