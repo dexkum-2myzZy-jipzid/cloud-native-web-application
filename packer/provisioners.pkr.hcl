@@ -9,13 +9,13 @@ build {
 
   # Copy all script files to EC2
   provisioner "file" {
-    source      = "scripts/setup_user.sh"
-    destination = "/tmp/setup_user.sh"
+    source      = "scripts/os_init.sh"
+    destination = "/tmp/os_init.sh"
   }
 
   provisioner "file" {
-    source      = "scripts/install_dependencies.sh"
-    destination = "/tmp/install_dependencies.sh"
+    source      = "scripts/setup_user.sh"
+    destination = "/tmp/setup_user.sh"
   }
 
   provisioner "file" {
@@ -31,9 +31,9 @@ build {
   # Execute scripts
   provisioner "shell" {
     inline = [
-      "chmod +x /tmp/setup_user.sh /tmp/install_dependencies.sh /tmp/deploy_webapp.sh",
+      "chmod +x /tmp/os_init.sh /tmp/setup_user.sh /tmp/deploy_webapp.sh",
+      "sudo /tmp/os_init.sh",
       "sudo /tmp/setup_user.sh",
-      "sudo /tmp/install_dependencies.sh",
       "sudo /tmp/deploy_webapp.sh"
     ]
   }
