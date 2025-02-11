@@ -21,32 +21,24 @@ build {
     destination = "/tmp/deploy_webapp.sh"
   }
 
-  provisioner "shell" {
-    inline = [
-      "chmod +x /tmp/os_init.sh /tmp/setup_user.sh",
-      "sudo /tmp/os_init.sh",
-      "sudo /tmp/setup_user.sh",
-      "rm -f /tmp/os_init.sh /tmp/setup_user.sh"
-    ]
-  }
-
   provisioner "file" {
     source      = "scripts/start_webapp.sh"
-    destination = "/opt/webapp/start_webapp.sh"
+    destination = "/tmp/start_webapp.sh"
   }
 
   # service file for long-term use
   provisioner "file" {
     source      = "scripts/webapp.service"
-    destination = "/etc/systemd/system/webapp.service"
+    destination = "/tmp/webapp.service"
   }
 
   provisioner "shell" {
     inline = [
-      "chmod +x /opt/webapp/start_webapp.sh",
-      "chmod +x /tmp/deploy_webapp.sh",
+      "chmod +x /tmp/deploy_webapp.sh /tmp/os_init.sh /tmp/setup_user.sh",
+      "sudo /tmp/os_init.sh",
+      "sudo /tmp/setup_user.sh",
       "sudo /tmp/deploy_webapp.sh",
-      "rm -f /tmp/deploy_webapp.sh"
+      "rm -f /tmp/os_init.sh /tmp/setup_user.sh /tmp/deploy_webapp.sh"
     ]
   }
 }
