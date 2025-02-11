@@ -4,11 +4,12 @@ ConditionPathExists=/opt/webapp/.env
 After=network.target
 
 [Service]
-Type=simple
+Type=forking
 User=csye6225
 Group=csye6225
 WorkingDirectory=/opt/webapp
-ExecStart=/opt/webapp/venv/bin/python3 /opt/webapp/run.py
+ExecStart=/opt/webapp/start_webapp.sh
+PIDFile=/var/run/webapp.pid
 Restart=always
 RestartSec=3
 StandardOutput=journal

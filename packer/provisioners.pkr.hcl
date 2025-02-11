@@ -28,6 +28,11 @@ build {
     destination = "/tmp/webapp.service"
   }
 
+  provisioner "file" {
+    source      = "scripts/start_webapp.sh"
+    destination = "/tmp/start_webapp.sh"
+  }
+
   # Execute scripts
   provisioner "shell" {
     inline = [
