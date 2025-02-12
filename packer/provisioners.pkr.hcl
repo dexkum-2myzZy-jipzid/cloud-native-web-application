@@ -34,7 +34,7 @@ build {
 
   provisioner "shell" {
     inline = [
-      "chmod +x /tmp/deploy_webapp.sh /tmp/os_init.sh /tmp/setup_user.sh",
+      "chmod +x /tmp/deploy_webapp.sh /tmp/os_init.sh /tmp/setup_user.sh /tmp/start_webapp.sh",
       "sudo /tmp/os_init.sh",
       "sudo /tmp/setup_user.sh",
       "sudo /tmp/deploy_webapp.sh",
