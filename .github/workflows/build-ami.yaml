@@ -1,0 +1,54 @@
+name: Build AMI with Packer
+
+on:
+  push:
+    branches:
+      - main
+      - feature/*
+
+jobs:
+  build-ami:
+    runs-on: ubuntu-latest
+    environment:
+      name: AWS_DEPLOYMENT
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Packer
+        uses: hashicorp/setup-packer@main
+        id: setup
+        with:
+          version: '1.12.0'
+
+      - name: Packer Init
+        run: |
+          cd packer
+          packer init .
+
+      - name: Install AWS CLI
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Packer Validate
+        run: |
+          cd packer
+          packer validate .
+
+      - name: Packer Build
+        run: |
+          cd packer
+          packer build . | tee packer_build_output.log
+
+      - name: Extract AMI ID
+        id: get_ami_id
+        run: |
+          AMI_ID=$(grep -oP '(?<=us-west-2: )ami-[a-zA-Z0-9]+' packer/packer_build_output.log)
+          [ -z "$AMI_ID" ] && { echo "Error: AMI ID is empty"; exit 1; }
+          echo "AMI ID is $AMI_ID"
+          echo "$AMI_ID" > ami_id.txt
+          echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV

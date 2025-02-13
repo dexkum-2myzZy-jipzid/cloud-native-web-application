@@ -3,7 +3,7 @@ name: Continuous Deploy
 on:
   push:
     branches:
-      - feature/*
+      # - feature/*
       - main
   pull_request:
     branches:
