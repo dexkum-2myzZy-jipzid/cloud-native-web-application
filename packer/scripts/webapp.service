@@ -1,0 +1,18 @@
+[Unit]
+Description=webapp API
+ConditionPathExists=/opt/webapp/.env
+After=network.target
+
+[Service]
+Type=simple
+User=csye6225
+Group=csye6225
+WorkingDirectory=/opt/webapp
+ExecStart=/opt/webapp/venv/bin/python3 /opt/webapp/run.py
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
