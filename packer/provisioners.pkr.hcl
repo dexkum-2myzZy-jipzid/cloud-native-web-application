@@ -21,11 +21,6 @@ build {
     destination = "/tmp/deploy_webapp.sh"
   }
 
-  provisioner "file" {
-    source      = "scripts/start_webapp.sh"
-    destination = "/tmp/start_webapp.sh"
-  }
-
   # service file for long-term use
   provisioner "file" {
     source      = "scripts/webapp.service"
@@ -34,7 +29,7 @@ build {
 
   provisioner "shell" {
     inline = [
-      "chmod +x /tmp/deploy_webapp.sh /tmp/os_init.sh /tmp/setup_user.sh /tmp/start_webapp.sh",
+      "chmod +x /tmp/deploy_webapp.sh /tmp/os_init.sh /tmp/setup_user.sh",
       "sudo /tmp/os_init.sh",
       "sudo /tmp/setup_user.sh",
       "sudo /tmp/deploy_webapp.sh",
