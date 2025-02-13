@@ -22,16 +22,9 @@ sudo -u csye6225 python3 -m venv /opt/webapp/venv
 sudo -u csye6225 /opt/webapp/venv/bin/pip install --upgrade pip
 sudo -u csye6225 /opt/webapp/venv/bin/pip install -r /opt/webapp/requirements.txt
 
-# Start webapp service
-echo "Starting webapp service..."
-sudo systemctl start webapp.service
-
-# Install and configure Nginx
-echo "Installing Nginx..."
-sudo yum install -y nginx
-
 # Copy Nginx configuration
 echo "Configuring Nginx..."
-sudo cp /tmp/nginx.conf /etc/nginx/conf.d/webapp.conf
+sudo rm /etc/nginx/sites-enabled/default
+sudo cp /tmp/nginx.conf /etc/nginx/sites-available/webapp.conf
+sudo ln -s /etc/nginx/sites-available/webapp.conf /etc/nginx/sites-enabled/
 sudo systemctl enable nginx
-sudo systemctl restart nginx
