@@ -27,13 +27,18 @@ build {
     destination = "/tmp/webapp.service"
   }
 
+  provisioner "file" {
+    source      = "./nginx.conf"
+    destination = "/tmp/nginx.conf"
+  }
+
   provisioner "shell" {
     inline = [
       "chmod +x /tmp/deploy_webapp.sh /tmp/os_init.sh /tmp/setup_user.sh",
       "sudo /tmp/os_init.sh",
       "sudo /tmp/setup_user.sh",
       "sudo /tmp/deploy_webapp.sh",
-      "rm -f /tmp/os_init.sh /tmp/setup_user.sh /tmp/deploy_webapp.sh"
+      "rm -f /tmp/os_init.sh /tmp/setup_user.sh /tmp/deploy_webapp.sh /tmp/nginx.conf"
     ]
   }
 }
