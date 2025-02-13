@@ -6,6 +6,7 @@ echo "Extracting webapp..."
 mkdir -p /opt/webapp
 unzip /tmp/webapp.zip -d /opt/webapp
 sudo cp /tmp/start_webapp.sh /opt/webapp/start_webapp.sh
+sudo chmod +x /opt/webapp/start_webapp.sh
 
 # Copy systemd service file
 echo "Setting up systemd service..."
