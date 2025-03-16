@@ -16,6 +16,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Compress Root Directory and Move Zip to packer folder
+        run: |
+          zip -r webapp.zip . -x "packer/*" -x "infrastructure/*" -x "grader/*" -x ".github/*"
+          mv webapp.zip packer/
+
       - name: Setup Packer
         uses: hashicorp/setup-packer@main
         id: setup
