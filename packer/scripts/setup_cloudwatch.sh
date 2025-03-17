@@ -3,7 +3,7 @@
 set -e
 
 echo "Downloading Amazon CloudWatch Agent..."
-sudo wget -q https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb -O /tmp/amazon-cloudwatch-agent.deb
+sudo wget -q https://s3.us-west-2.amazonaws.com/amazoncloudwatch-agent-us-west-2/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb -O /tmp/amazon-cloudwatch-agent.deb
 
 echo "Installing Amazon CloudWatch Agent..."
 sudo dpkg -i -E /tmp/amazon-cloudwatch-agent.deb
