@@ -21,9 +21,8 @@ build {
     destination = "/tmp/deploy_webapp.sh"
   }
 
-  # service file for long-term use
   provisioner "file" {
-    source      = "scripts/webapp.service"
+    source      = "./webapp.service"
     destination = "/tmp/webapp.service"
   }
 
@@ -32,13 +31,25 @@ build {
     destination = "/tmp/nginx.conf"
   }
 
+  # cloudwatch
+  provisioner "file" {
+    source      = "scripts/amazon-cloudwatch-agent.json"
+    destination = "/tmp/amazon-cloudwatch-agent.json"
+  }
+
+  provisioner "file" {
+    source      = "scripts/setup_cloudwatch.sh"
+    destination = "/tmp/setup_cloudwatch.sh"
+  }
+
   provisioner "shell" {
     inline = [
-      "chmod +x /tmp/deploy_webapp.sh /tmp/os_init.sh /tmp/setup_user.sh",
+      "chmod +x /tmp/deploy_webapp.sh /tmp/os_init.sh /tmp/setup_user.sh /tmp/setup_cloudwatch.sh",
       "sudo /tmp/os_init.sh",
       "sudo /tmp/setup_user.sh",
       "sudo /tmp/deploy_webapp.sh",
-      "rm -f /tmp/os_init.sh /tmp/setup_user.sh /tmp/deploy_webapp.sh /tmp/nginx.conf"
+      "sudo /tmp/setup_cloudwatch.sh"
+      "rm -f /tmp/os_init.sh /tmp/setup_user.sh /tmp/deploy_webapp.sh /tmp/nginx.conf /tmp/setup_cloudwatch.sh"
     ]
   }
 }
