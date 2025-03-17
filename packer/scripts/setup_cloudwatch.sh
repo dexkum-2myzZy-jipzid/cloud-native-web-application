@@ -22,6 +22,9 @@ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
     -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json \
     -s
 
+echo "Verifying CloudWatch Agent status..."
+sudo systemctl status amazon-cloudwatch-agent
+
 echo "Enabling CloudWatch Agent to start on boot..."
 sudo systemctl enable amazon-cloudwatch-agent
 
