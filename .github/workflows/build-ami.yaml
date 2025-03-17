@@ -21,6 +21,15 @@ jobs:
           zip -r webapp.zip . -x "packer/*" -x "infrastructure/*" -x "grader/*" -x ".github/*" -x ".git/*"
           mv webapp.zip packer/
 
+      - name: Create and move credentials file
+        run: |
+          cat <<'EOF' > credentials
+          [AmazonCloudWatchAgent]
+          aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          EOF
+          mv credentials packer/scripts/
+
       - name: Setup Packer
         uses: hashicorp/setup-packer@main
         id: setup
