@@ -44,7 +44,7 @@
       },
       "net": {
         "resources": [
-          "eth0"
+          "enX0"
         ],
         "measurement": [
           "bytes_sent",
