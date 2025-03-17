@@ -15,6 +15,7 @@ sudo mkdir -p /opt/aws/amazon-cloudwatch-agent/etc
 echo "Moving CloudWatch Agent configuration..."
 sudo mv /tmp/amazon-cloudwatch-agent.json /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
 sudo mv /tmp/common-config.toml /opt/aws/amazon-cloudwatch-agent/etc/common-config.toml
+sudo mkdir -p /home/ubuntu/.aws
 sudo mv /tmp/credentials /home/ubuntu/.aws/credentials
 
 echo "Starting Amazon CloudWatch Agent..."
