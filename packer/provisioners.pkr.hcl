@@ -48,7 +48,7 @@ build {
       "sudo /tmp/os_init.sh",
       "sudo /tmp/setup_user.sh",
       "sudo /tmp/deploy_webapp.sh",
-      "sudo /tmp/setup_cloudwatch.sh"
+      "sudo /tmp/setup_cloudwatch.sh",
       "rm -f /tmp/os_init.sh /tmp/setup_user.sh /tmp/deploy_webapp.sh /tmp/nginx.conf /tmp/setup_cloudwatch.sh"
     ]
   }
