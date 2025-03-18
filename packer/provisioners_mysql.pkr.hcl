@@ -8,16 +8,6 @@ build {
   }
 
   provisioner "file" {
-    source      = "scripts/common-config.toml"
-    destination = "/tmp/common-config.toml"
-  }
-
-  provisioner "file" {
-    source      = "scripts/credentials"
-    destination = "/tmp/credentials"
-  }
-
-  provisioner "file" {
     source      = "scripts/setup_cloudwatch.sh"
     destination = "/tmp/setup_cloudwatch.sh"
   }
