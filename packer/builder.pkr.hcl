@@ -12,7 +12,7 @@ source "amazon-ebs" "webapp" {
   instance_type     = var.instance_type
   source_ami        = var.source_ami
   ssh_username      = var.ssh_username
-  ami_name          = "csye6225_${formatdate("YYYY_MM_DD_HH_mm", timestamp())}"
+  ami_name          = "csye6225_webapp_${formatdate("YYYY_MM_DD_HH_mm", timestamp())}"
   subnet_id         = var.subnet_id
   security_group_id = var.security_group_id
   ami_users         = [var.account_id]
@@ -28,5 +28,22 @@ source "amazon-ebs" "webapp" {
     volume_size           = var.volume_size
     volume_type           = var.volume_type
     delete_on_termination = true
+  }
+}
+
+source "amazon-ebs" "mysql" {
+  region            = var.aws_region
+  instance_type     = var.instance_type
+  source_ami        = var.mysql_source_ami
+  ssh_username      = var.ssh_username
+  ami_name          = "csye6225_mysql_${formatdate("YYYY_MM_DD_HH_mm", timestamp())}"
+  subnet_id         = var.subnet_id
+  security_group_id = var.security_group_id
+  ami_users         = [var.account_id]
+  ami_description   = var.mysql_ami_description
+
+  aws_polling {
+    delay_seconds = var.delay_seconds
+    max_attempts  = var.max_attempts
   }
 }
