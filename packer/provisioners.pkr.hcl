@@ -26,10 +26,10 @@ build {
     destination = "/tmp/webapp.service"
   }
 
-  provisioner "file" {
-    source      = "./nginx.conf"
-    destination = "/tmp/nginx.conf"
-  }
+  # provisioner "file" {
+  #   source      = "./nginx.conf"
+  #   destination = "/tmp/nginx.conf"
+  # }
 
   # cloudwatch
   provisioner "file" {
