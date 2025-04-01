@@ -23,8 +23,8 @@ sudo -u csye6225 /opt/webapp/venv/bin/pip install --upgrade pip
 sudo -u csye6225 /opt/webapp/venv/bin/pip install -r /opt/webapp/requirements.txt
 
 # Copy Nginx configuration
-echo "Configuring Nginx..."
-sudo rm /etc/nginx/sites-enabled/default
-sudo cp /tmp/nginx.conf /etc/nginx/sites-available/webapp.conf
-sudo ln -s /etc/nginx/sites-available/webapp.conf /etc/nginx/sites-enabled/
-sudo systemctl enable nginx
+# echo "Configuring Nginx..."
+# sudo rm /etc/nginx/sites-enabled/default
+# sudo cp /tmp/nginx.conf /etc/nginx/sites-available/webapp.conf
+# sudo ln -s /etc/nginx/sites-available/webapp.conf /etc/nginx/sites-enabled/
+# sudo systemctl enable nginx
