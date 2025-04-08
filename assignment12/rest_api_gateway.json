@@ -1,0 +1,14 @@
+{
+  "id": "kygaxyvdj8",
+  "name": "Assignment12-PrivateAPI",
+  "createdDate": "2025-04-07T12:54:41-07:00",
+  "apiKeySource": "HEADER",
+  "endpointConfiguration": {
+    "types": ["PRIVATE"],
+    "ipAddressType": "dualstack"
+  },
+  "policy": "{\\\"Version\\\":\\\"2012-10-17\\\",\\\"Statement\\\":[{\\\"Effect\\\":\\\"Allow\\\",\\\"Principal\\\":\\\"*\\\",\\\"Action\\\":\\\"execute-api:Invoke\\\",\\\"Resource\\\":\\\"arn:aws:execute-api:us-west-2:381492181945:kygaxyvdj8\\/*\\\",\\\"Condition\\\":{\\\"StringEquals\\\":{\\\"aws:SourceVpc\\\":\\\"vpc-0eca6005e36524c84\\\"}}}]}",
+  "tags": {},
+  "disableExecuteApiEndpoint": false,
+  "rootResourceId": "uh4ltet1re"
+}
