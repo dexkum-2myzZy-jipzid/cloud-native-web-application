@@ -4,12 +4,12 @@
   "Runtime": "python3.13",
   "Role": "arn:aws:iam::381492181945:role/service-role/MoviePosterFunction-role-covokj8g",
   "Handler": "lambda_function.lambda_handler",
-  "CodeSize": 1100081,
+  "CodeSize": 1100936,
   "Description": "",
   "Timeout": 10,
   "MemorySize": 128,
-  "LastModified": "2025-04-08T17:57:00.000+0000",
-  "CodeSha256": "0du+9d22MNBqdyAwTC83aX5ckprvFDWgX5WM6aVNglM=",
+  "LastModified": "2025-04-09T03:48:36.000+0000",
+  "CodeSha256": "0+Y6iL3frKm6oW7XaYK9oUgZ371+fiBQqRdzGujg2lQ=",
   "Version": "$LATEST",
   "VpcConfig": {
     "SubnetIds": ["subnet-0f99369e9b3bfc87d"],
@@ -19,13 +19,15 @@
   },
   "Environment": {
     "Variables": {
-      "TMDB_READ_TOKEN": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlYjk1ZmVkNTUyZWQxYTZjOTMwNzQzNGM0MzNmM2QwZCIsIm5iZiI6MTc0NDA4MTMwNS42NTc5OTk4LCJzdWIiOiI2N2Y0OTE5OThjZmNjZjdiYWZkOTNkYzMiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.wbSGsBX_-9UdPicy_lLMi9mpdOnE2GPvn3Mh30RwCaQ"
+      "TMDB_READ_TOKEN": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlYjk1ZmVkNTUyZWQxYTZjOTMwNzQzNGM0MzNmM2QwZCIsIm5iZiI6MTc0NDA4MTMwNS42NTc5OTk4LCJzdWIiOiI2N2Y0OTE5OThjZmNjZjdiYWZkOTNkYzMiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.wbSGsBX_-9UdPicy_lLMi9mpdOnE2GPvn3Mh30RwCaQ",
+      "MOVIE_USER_EMAIL": "test@example.com",
+      "MOVIE_USER_PASSWORD": "password123"
     }
   },
   "TracingConfig": {
     "Mode": "PassThrough"
   },
-  "RevisionId": "aff747ca-3894-47db-b8d9-eade0af06236",
+  "RevisionId": "aa945bb6-8f4c-4760-ba16-da5382e5fb2e",
   "State": "Active",
   "LastUpdateStatus": "Successful",
   "PackageType": "Zip",
