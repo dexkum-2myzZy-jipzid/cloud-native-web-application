@@ -1,3 +1,3 @@
-# test case: movie_id = 2 (TMDB API call failed with movie_id = 1) 
-curl -X GET https://kygaxyvdj8.execute-api.us-west-2.amazonaws.com/v3/poster/2
-{"movie_id": 2, "poster_url": "https://image.tmdb.org/t/p/w500/ojDg0PGvs6R9xYFodRct2kdI6wC.jpg", "poster_size": 1024000, "message": "real poster details fetched successfully"}
+# test case: movie_id = 1
+curl -X GET https://kygaxyvdj8.execute-api.us-west-2.amazonaws.com/v3/poster/1
+{"movie_id": 1, "poster_url": "https://image.tmdb.org/t/p/w500/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg", "poster_size": 1024000, "message": "post details fetched successfully"}
