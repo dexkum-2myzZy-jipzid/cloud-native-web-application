@@ -129,3 +129,6 @@ cython_debug/
 
 # Packer
 packer/packer_vars.hcl
+
+#aws lambda
+assignment12/mylambda_function

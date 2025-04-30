@@ -1,38 +1,33 @@
-# Project Deployment Guide
+# Cloud Native Web Application
 
-**Name**: Liang Chen
+## Overview
 
-**EC2 Instance Type**: t2.micro
+This project is a cloud-native web application built with Python and Flask, focusing on automated deployment, scalability, and high availability. It leverages modern DevOps practices such as automated image building, CI/CD with GitHub Actions, cloud monitoring, and serverless API deployment.
 
-**OS**: Ubuntu 20.04 LTS
+## Key Features
 
-**Language**: Python 3.12.3
+- **RESTful API**: Endpoints for movie info, ratings, links, and health checks.
+- **User Authentication**: JWT-based registration and login for secure access.
+- **Automated Deployment**: CI/CD pipeline with GitHub Actions for seamless deployment and environment setup.
+- **Custom AMI**: Automated dependency installation and configuration using Packer.
+- **Cloud Monitoring**: CloudWatch Agent auto-installation and configuration for system and app metrics.
+- **Database Automation**: MySQL instance provisioning and EBS volume setup.
+- **Serverless Support**: AWS Lambda implementation for API endpoints.
+- **Auto-Grading**: Integrated grader scripts for assignment evaluation.
 
-**Web Server Framework Used**: Flask
+## Project Structure
 
-## Build and Deploy Instructions
+- `app/`: Core Flask application (routes, middleware, config)
+- `database/`: Database connection pooling and operations
+- `scripts/`: Data processing and maintenance scripts
+- `packer/`: Packer build scripts and configs
+- `grader/`: Auto-grading tools
+- `assignment12/`: Lambda-related code and configs
 
-### Trigger Conditions
+## Deployment
 
-- **On push** to the `feature/*` or `main` branches.
-- **On pull request** to the `main` branch.
+See the Build and Deploy Instructions section in this README for one-click automated deployment to AWS.
 
-### Deployment Job
+---
 
-- **Runs on**: `ubuntu-latest`
-- **Environment**: `AWS_DEPLOYMENT`
-
-### Steps
-
-1. Checkout code.
-2. Configure AWS credentials.
-3. Delete existing CloudFormation stack if it exists.
-4. Create VPC and subnets using the `vpc.yaml` template.
-5. Wait for stack creation to complete.
-6. Get stack outputs and extract public IPs, private IPs, and Database Instance ID.
-7. Attach EBS Volume to the Database EC2 instance.
-8. Configure EBS Volume (mount, set permissions, restart MySQL service).
-9. Setup environment on WebApp EC2.
-10. Create and copy `.env` file to EC2 with database instance IP.
-11. Launch Flask app on EC2 using `nohup`.
-12. Setup grader workflow variables and upload them as an artifact.
+For detailed API docs, deployment steps, or more info, check the subfolders or source code comments.
